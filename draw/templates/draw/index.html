@@ -59,7 +59,6 @@
        //https://stackoverflow.com/questions/13070054/convert-rgb-strings-to-hex-in-javascript
        socket.send("{\"x\" : " + event.point.x + ", \"y\" : " + event.point.y + 
        ", \"r\" : " + a[0] + ", \"g\" : " + a[1] + ", \"b\" : " + a[2] + ", \"uid\" : " + uid + "}" );
-       //socket.send("{\"x\" : " + event.point.x + ", \"y\" : 43" + ", \"uid\" : " + uid + "}" );
     }
 
     socket.onmessage = function(receivedMessage) {
@@ -67,6 +66,7 @@
         if (queryString == "?size=large") {
             var received = JSON.parse(receivedMessage.data);
             console.log("Received: " + JSON.stringify(received));
+            path.strokeColor._canvasStyle = "rgb(" + received.r + "," + received.g+ "," + received.b + ")";
             path.add(received);
         }
     }
