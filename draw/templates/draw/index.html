@@ -43,6 +43,8 @@
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
 
+    const map1 = new Map();
+
     var socket = new WebSocket(
         'ws://' + window.location.host + '/ws/draw');
 
@@ -66,8 +68,18 @@
         if (queryString == "?size=large") {
             var received = JSON.parse(receivedMessage.data);
             console.log("Received: " + JSON.stringify(received));
-            path.strokeColor._canvasStyle = "rgb(" + received.r + "," + received.g+ "," + received.b + ")";
-            path.add(received);
+            if (map1.has(received.uid)) {
+                console.log("yay");
+                console.log(map1.get(received.uid));
+                map1.get(received.uid).add(new paper.Point(received.x,received.y));
+            } 
+            else {
+                var newpath = new paper.Path();
+                newpath.strokeColor = "pink";
+                newpath.strokeColor._canvasStyle = "rgb(" + received.r + "," + received.g+ "," + received.b + ")";
+                map1.set(received.uid, newpath);
+                newpath.add(new paper.Point(received.x,received.y));
+            }
         }
     }
 
