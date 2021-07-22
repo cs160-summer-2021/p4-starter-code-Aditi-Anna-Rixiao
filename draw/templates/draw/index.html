@@ -47,9 +47,13 @@
         'ws://' + window.location.host + '/ws/draw');
 
     tool.onMouseMove = function(event) { //http://paperjs.org/reference/tool/ path examples
+       //https://www.sitepoint.com/get-url-parameters-with-javascript/
+       const queryString = window.location.search;
+       if (queryString == "?size=large") {
+           return;
+       }
        path.add(event.point);
        // You may need to add code here if you want to pass any other information.
-       console.log(path.strokeColor._canvasStyle);
        var b = path.strokeColor._canvasStyle
        var a = b.split("(")[1].split(")")[0].split(",");
        //https://stackoverflow.com/questions/13070054/convert-rgb-strings-to-hex-in-javascript
@@ -59,9 +63,12 @@
     }
 
     socket.onmessage = function(receivedMessage) {
-        var received = JSON.parse(receivedMessage.data);
-        console.log("Received: " + JSON.stringify(received));
-        path.add(received);
+        const queryString = window.location.search;
+        if (queryString == "?size=large") {
+            var received = JSON.parse(receivedMessage.data);
+            console.log("Received: " + JSON.stringify(received));
+            path.add(received);
+        }
     }
 
     socket.onclose = function(e) {
