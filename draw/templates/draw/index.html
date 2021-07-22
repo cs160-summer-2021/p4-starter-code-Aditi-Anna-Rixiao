@@ -21,12 +21,24 @@
 <script>
 
     // setting up the canvas and one paper tool
+    var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF']; 
+          //https://gist.github.com/mucar/3898821
     var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
     var tool = new paper.Tool();
     var path = new paper.Path();
     var uid = Date.now() % 10000;
-    path.strokeColor = "red";
+    path.strokeColor = colorArray[Math.floor(Math.random() * colorArray.length)];
+    //path.strokeColor = 'pink'
 
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
@@ -37,13 +49,19 @@
     tool.onMouseMove = function(event) { //http://paperjs.org/reference/tool/ path examples
        path.add(event.point);
        // You may need to add code here if you want to pass any other information.
-       socket.send("{\"x\" : " + event.point.x + ", \"y\" : " + event.point.y + ", \"uid\" : " + uid + "}" );
+       console.log(path.strokeColor._canvasStyle);
+       var b = path.strokeColor._canvasStyle
+       var a = b.split("(")[1].split(")")[0].split(",");
+       //https://stackoverflow.com/questions/13070054/convert-rgb-strings-to-hex-in-javascript
+       socket.send("{\"x\" : " + event.point.x + ", \"y\" : " + event.point.y + 
+       ", \"r\" : " + a[0] + ", \"g\" : " + a[1] + ", \"b\" : " + a[2] + ", \"uid\" : " + uid + "}" );
+       //socket.send("{\"x\" : " + event.point.x + ", \"y\" : 43" + ", \"uid\" : " + uid + "}" );
     }
 
     socket.onmessage = function(receivedMessage) {
         var received = JSON.parse(receivedMessage.data);
         console.log("Received: " + JSON.stringify(received));
-        // You will probably want to add some code here to draw more lines.
+        path.add(received);
     }
 
     socket.onclose = function(e) {
