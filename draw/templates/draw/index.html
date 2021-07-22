@@ -68,6 +68,7 @@
         if (queryString == "?size=large") {
             var received = JSON.parse(receivedMessage.data);
             console.log("Received: " + JSON.stringify(received));
+            //Yixin Chen in the comments was super helpful for suggesting the map idea!
             if (map1.has(received.uid)) {
                 map1.get(received.uid).add(new paper.Point(received.x,received.y));
             } 
